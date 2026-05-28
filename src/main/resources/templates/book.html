@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CineBook</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+	    <img src="/images/logo2.png" alt="logo">
+	</div>
+
+    <div class="search-box">
+	    <form action="/content/movie/search">
+	        <input type="text"
+	               name="keyword"
+	               placeholder="책, 영화 제목, 저자, 감독 검색">
+	    </form>
+	
+	</div>
+
+    <nav class="menu">
+        <a href="/movie">영화</a>
+        <a href="/book" class="active">책</a>
+        <a href="#">사용자 설정</a>
+    </nav>
+
+</header>
+
+<main>
+
+    <div class="title-area">
+        <h1>전체 책</h1>
+        <p>총 1294권의 책이 있습니다.</p>
+    </div>
+
+    <section class="content">
+    	<a href="/content/1" class="card-link">
+		    <div class="card">
+		        <div class="category movie">영화</div>
+		        <img src="https://i.imgur.com/8Km9tLL.jpg">
+		        <h3>인터스텔라</h3>
+		        <p class="author">크리스토퍼 놀란</p>
+		        <div class="rating">
+				    <i class="fa-solid fa-star"></i>
+				    4.8
+				</div>
+				<div class="info">
+				    <span>
+				        <i class="fa-regular fa-comment"></i>
+				        120
+				    </span>
+				    <span>
+				        <i class="fa-regular fa-eye"></i>
+				        532
+				    </span>
+				</div>
+		    </div>
+		</a>
+		<a href="/content/2" class="card-link">
+		    <div class="card">
+		        <div class="category book">책</div>
+		        <img src="https://image.yes24.com/goods/119242056/XL">
+		        <h3>바깥은 여름</h3>
+		        <p class="author">김애란</p>
+		        <div class="rating">
+				    <i class="fa-solid fa-star"></i>
+				    4.5
+				</div>
+		        <div class="info">
+				    <span>
+				        <i class="fa-regular fa-comment"></i>
+				        15
+				    </span>
+				    <span>
+				        <i class="fa-regular fa-eye"></i>
+				        30
+				    </span>
+				</div>
+		    </div>
+	    </a>
+	</section>
+</main>
+</body>
+</html>
+<!-- <section class="content">
+
+    <div class="card" th:each="book : ${books}">
+
+        <img th:src="${book.coverImage}">
+
+        <h3 th:text="${book.title}"></h3>
+
+        <p th:text="${book.author}"></p>
+
+        <span th:text="${book.rating}"></span>
+
+    </div>
+
+</section> -->

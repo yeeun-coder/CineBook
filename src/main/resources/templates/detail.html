@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>상세페이지</title>
+
+    <link rel="stylesheet" href="/css/detail.css">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<div class="detail-container">
+
+    <!-- 뒤로가기 -->
+
+    <a href="/" class="back-btn">
+        <i class="fa-solid fa-chevron-left"></i>
+        뒤로가기
+    </a>
+
+    <!-- 상단 -->
+
+    <div class="top-section">
+
+        <!-- 포스터 -->
+
+        <img class="poster"
+             src="https://image.yes24.com/goods/119242056/XL">
+
+        <!-- 정보 -->
+
+        <div class="content-info">
+
+            <div class="category book">
+                책
+            </div>
+
+            <h1>바깥은 여름</h1>
+
+            <p class="creator">
+                저자 김애란
+            </p>
+
+            <div class="rating">
+                <i class="fa-solid fa-star"></i>
+                4.5
+            </div>
+
+            <div class="sub-info">
+
+                <span>
+                    <i class="fa-regular fa-comment"></i>
+                    15
+                </span>
+
+                <span>
+                    <i class="fa-regular fa-eye"></i>
+                    20
+                </span>
+
+            </div>
+
+            <button class="review-btn">
+                리뷰 작성하기
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- 리뷰 리스트 -->
+
+    <div class="review-list">
+
+        <div class="review-card">
+
+            <div class="review-header">
+
+                <div class="profile"></div>
+
+                <div class="review-user">
+
+                    <span class="nickname">
+                        독서광인티티
+                    </span>
+
+                    <span class="score">
+                        ★ 5.0
+                    </span>
+
+                    <span class="time">
+                        2시간 전
+                    </span>
+
+                </div>
+
+            </div>
+
+            <p class="review-text">
+                모든 현대인들의 감정을 고스란히 느끼게 해주는 소설이다.
+            </p>
+
+            <div class="review-bottom">
+
+                <span>
+                    <i class="fa-regular fa-comment"></i>
+                    1
+                </span>
+
+                <span>
+                    <i class="fa-regular fa-eye"></i>
+                    5
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>

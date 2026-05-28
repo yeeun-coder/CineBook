@@ -1,0 +1,226 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#FFFFFF;
+    font-family:'Pretendard', sans-serif;
+}
+
+/* 헤더 */
+
+.header{
+    width:100%;
+    height:90px;
+
+    background:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 60px;
+
+    border-bottom:1px solid #e5e5e5;
+}
+
+.logo img{
+    width:90px;
+    cursor:pointer;
+}
+
+/* 검색창 */
+
+.search-box input{
+    width:400px;
+    height:45px;
+
+    border:1px solid #ddd;
+    border-radius:30px;
+
+    padding:0 20px;
+
+    outline:none;
+
+    font-size:15px;
+}
+
+/* 메뉴 */
+
+.menu{
+    display:flex;
+    gap:40px;
+}
+
+.menu a{
+    text-decoration:none;
+    color:#666;
+
+    font-size:18px;
+}
+
+.menu .active{
+    color:black;
+    font-weight:bold;
+}
+
+/* 메인 */
+
+main{
+    padding:50px 60px;
+}
+
+/* 제목 */
+
+.title-area h1{
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.title-area p{
+    color:#9a9a9a;
+    font-size:14px;
+    margin-bottom:35px;
+}
+
+/* 카드 */
+
+/* .content{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:30px;
+} */
+.content{
+    display:grid;
+    
+    grid-template-columns:repeat(6, 165px);
+    
+    gap:24px;
+}
+
+/* .card{
+    background:white;
+
+    border:1px solid #e3e3e3;
+
+    border-radius:16px;
+
+    padding:15px;
+
+    transition:0.2s;
+} */
+.card{
+    width:165px;
+
+    background:white;
+
+    border:1px solid #e3e3e3;
+
+    border-radius:14px;
+
+    padding:12px;
+
+    transition:0.2s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+
+    box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* 카테고리 */
+
+.category{
+    display:inline-block;
+
+    padding:4px 8px;
+
+    border-radius:8px;
+
+    font-size:11px;
+
+    margin-bottom:10px;
+}
+
+.category.book{
+    border:1px solid #ffbdbd;
+
+    color:#ff8a8a;
+
+    background:#fff7f7;
+}
+
+.category.movie{
+    border:1px solid #d7c8ff;
+
+    color:#8f72ff;
+
+    background:#f7f4ff;
+}
+
+/* 이미지 */
+
+.card img{
+    width:100%;
+    height:200px;
+
+    object-fit:cover;
+
+    border-radius:8px;
+}
+
+.card-link{
+    text-decoration:none;
+    color:inherit;
+}
+
+/* 제목 */
+
+.card h3{
+    margin-top:12px;
+    font-size:15px;
+    font-weight:600;
+}
+
+/* 저자 */
+
+.author{
+    color:gray;
+    margin-top:4px;
+
+    font-size:13px;
+}
+
+/* 평점 */
+
+.rating{
+    margin-top:10px;
+
+    font-weight:bold;
+    font-size:13px;
+}
+
+/* 하단 정보 */
+
+.info{
+    display:flex;
+    justify-content:space-between;
+
+    margin-top:15px;
+
+    color:gray;
+    font-size:13px;
+}
+
+.rating i{
+    color:#000;
+    font-size:12px;
+}
+
+.info i{
+    margin-right:4px;
+}

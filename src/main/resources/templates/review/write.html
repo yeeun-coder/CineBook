@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 작성</title>
+
+    <link rel="stylesheet" href="/css/review.css">
+</head>
+
+<body>
+
+<div class="review-container">
+
+    <h2>리뷰 작성</h2>
+
+    <form action="/review/save"
+          method="post">
+
+        <input type="text"
+               name="shortReview"
+               placeholder="한줄평">
+
+        <textarea name="reviewText"
+                  placeholder="감상문">
+        </textarea>
+
+        <input type="number"
+               step="0.5"
+               name="rating">
+
+        <button type="submit">
+            등록하기
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
