@@ -1,0 +1,157 @@
+<!-- my-movie.html -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>내 영화 기록</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        <a href="/movie">
+            <img src="/images/logo2.png" alt="logo">
+        </a>
+    </div>
+
+    <div class="search-box">
+        <form action="/content/movie/search">
+            <input type="text"
+                   name="keyword"
+                   placeholder="영화 제목, 감독 검색">
+        </form>
+    </div>
+
+    <nav class="menu">
+        <a href="/movie">영화</a>
+        <a href="/book">책</a>
+        <a href="#">사용자 설정</a>
+    </nav>
+
+</header>
+
+<main>
+
+    <!-- 상단 영역 -->
+
+    <div class="title-area">
+
+        <div class="title-left">
+            <h1>내 영화 기록</h1>
+            <p>총 20의 영화를 기록했습니다.</p>
+        </div>
+
+        <div class="title-right">
+
+            <!-- <a href="/movie" class=top-btn>
+                전체 영화
+            </a> -->
+
+            <a href="/movie/add" class="top-btn dark-btn">
+                영화 추가 +
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- 카드 영역 -->
+
+    <section class="content">
+
+        <!-- 카드 -->
+
+        <a href="/content/1" class="card-link">
+
+            <div class="card">
+
+                <img src="https://i.imgur.com/8Km9tLL.jpg">
+
+                <h3>인터스텔라</h3>
+
+                <p class="review">
+                    “우린 답을 찾을 것이다.
+                    늘 그랬듯이…”
+                </p>
+
+                <div class="info">
+                    <div class="rating">
+                    	<span>
+	                        <i class="fa-solid fa-star"></i>
+	                        4.8
+                        </span>
+                    </div>
+                    
+	                <div class="date">
+	                    <span>
+	                        2026.05.01.
+	                    </span>
+	                </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+        <!-- 카드 끝 -->
+
+        <a href="/content/2" class="card-link">
+
+            <div class="card">
+
+                <img src="https://i.imgur.com/7D7I6dI.jpg">
+
+                <h3>라라랜드</h3>
+
+                <p class="review">
+                    “꿈을 꾸는 사람들의 이야기”
+                </p>
+
+                <div class="bottom-info">
+
+                    <div class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        4.5
+                    </div>
+
+                    <div class="date">
+                        2026.04.13.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </a>
+
+    </section>
+
+    <!-- 페이지 -->
+
+    <div class="pagination">
+
+        <a href="#" class="page active">1</a>
+        <a href="#" class="page">2</a>
+        <a href="#" class="page">3</a>
+
+        <span>...</span>
+
+        <a href="#" class="page">67</a>
+        <a href="#" class="page">68</a>
+
+    </div>
+
+</main>
+
+</body>
+</html>

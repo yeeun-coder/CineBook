@@ -4,11 +4,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class BookController {
+public class MyMovieController {
 
-    @GetMapping("/book")
-    public String book() {
+    @GetMapping("/my-movie")
+    public String myMovie() {
 
-        return "book";
+        return "my-movie";
     }
 }
