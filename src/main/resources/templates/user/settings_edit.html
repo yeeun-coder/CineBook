@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>프로필 편집 - CineBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/settings.css">
+</head>
+
+<body>
+
+<main class="settings-edit-page">
+    <h1>프로필 편집</h1>
+
+    <form th:action="@{/user/settings/edit}" method="post" th:object="${profileForm}">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+
+        <label for="nickname">닉네임</label>
+        <input type="text" id="nickname" th:field="*{nickname}" class="text-input">
+
+        <div class="form-actions">
+            <a href="/user/settings" class="btn-cancel">취소</a>
+            <button type="submit" class="btn-submit">저장</button>
+        </div>
+    </form>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<div th:fragment="header(activeMenu, searchType, kw)" class="header" xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+    <div class="logo">
+        <a href="/movie">CineBook</a>
+    </div>
+
+    <div class="search-box">
+        <form th:action="@{/content/search}" method="get" class="search-form">
+            <input type="hidden" name="type" th:value="${searchType}">
+            <input type="text"
+                   name="keyword"
+                   th:value="${kw}"
+                   class="search-input"
+                   placeholder="책, 영화 제목, 저자, 감독 검색">
+            <button type="submit" class="search-btn" aria-label="검색">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </form>
+    </div>
+
+    <nav class="menu">
+        <a href="/movie" th:classappend="${activeMenu == 'movie'} ? 'active'">영화</a>
+        <a href="/book" th:classappend="${activeMenu == 'book'} ? 'active'">책</a>
+        <a href="/user/settings" sec:authorize="isAuthenticated()"
+           th:classappend="${activeMenu == 'settings'} ? 'active'">사용자 설정</a>
+        <a href="/user/signin" sec:authorize="isAnonymous()">로그인</a>
+        <span sec:authorize="isAuthenticated()">
+            <form th:action="@{/user/signout}" method="post" style="display:inline;">
+                <button type="submit" class="link-btn">로그아웃</button>
+            </form>
+        </span>
+        <a href="/user/signup" sec:authorize="isAnonymous()">회원가입</a>
+    </nav>
+</div>

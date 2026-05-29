@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>콘텐츠 추가 - CineBook</title>
+    <link rel="stylesheet" href="/css/review.css">
+</head>
+
+<body>
+
+<div class="review-container">
+
+    <h2 th:text="${contentForm.type.name() == 'MOVIE'} ? '영화 추가' : '책 추가'">콘텐츠 추가</h2>
+
+    <form th:action="@{/content/add}" method="post" th:object="${contentForm}">
+
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+
+        <input type="hidden" th:field="*{type}">
+
+        <input type="text" th:field="*{title}" placeholder="제목">
+        <input type="text" th:field="*{creator}" placeholder="저자/감독">
+        <input type="text" th:field="*{imageUrl}" placeholder="이미지 URL">
+        <button type="submit">등록하기</button>
+    </form>
+
+</div>
+
+</body>
+</html>

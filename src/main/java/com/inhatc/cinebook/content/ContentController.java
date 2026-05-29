@@ -1,0 +1,177 @@
+package com.inhatc.cinebook.content;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.inhatc.cinebook.review.Review;
+import com.inhatc.cinebook.review.ReviewCommentService;
+import com.inhatc.cinebook.review.ReviewForm;
+import com.inhatc.cinebook.review.ReviewService;
+
+import java.util.List;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Controller
+@RequestMapping("/content")
+public class ContentController {
+
+	private final ContentService contentService;
+	private final ReviewService reviewService;
+	private final ReviewCommentService reviewCommentService;
+
+	@GetMapping("/search")
+	public String search(
+			@RequestParam String keyword,
+			@RequestParam(defaultValue = "MOVIE") ContentType type,
+			@RequestParam(defaultValue = "0") int page,
+			Model model) {
+
+		if (type == ContentType.MOVIE) {
+			contentService.searchMovie(keyword);
+			model.addAttribute("paging", contentService.getList(type, page, keyword));
+			model.addAttribute("cards", contentService.toCardViews(
+					contentService.getList(type, page, keyword).getContent()));
+			model.addAttribute("kw", keyword);
+			model.addAttribute("type", type);
+			return "movie";
+		}
+
+		return searchBooks(keyword, page, model);
+	}
+
+	private String searchBooks(String keyword, int page, Model model) {
+		model.addAttribute("type", ContentType.BOOK);
+		model.addAttribute("kw", keyword);
+		model.addAttribute("searchPage", page);
+
+		if (!contentService.isKakaoApiConfigured()) {
+			model.addAttribute("apiError",
+					"카카오 API 키가 없습니다. application.properties의 cinebook.kakao.api-key 를 설정해 주세요.");
+			model.addAttribute("apiBooks", List.of());
+		} else {
+			try {
+				model.addAttribute("apiBooks", contentService.searchBooksFromKakao(keyword, page));
+				model.addAttribute("apiError", null);
+			} catch (IllegalStateException e) {
+				model.addAttribute("apiBooks", List.of());
+				model.addAttribute("apiError", e.getMessage());
+			}
+		}
+
+		var paging = contentService.getList(ContentType.BOOK, page, keyword);
+		model.addAttribute("paging", paging);
+		model.addAttribute("cards", contentService.toCardViews(paging.getContent()));
+		return "book";
+	}
+
+	@PostMapping("/book/import")
+	public String importBook(
+			@RequestParam String isbn,
+			@RequestParam String title,
+			@RequestParam String creator,
+			@RequestParam(required = false) String imageUrl,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Content content = contentService.findOrCreateBook(isbn, title, creator, imageUrl);
+			return "redirect:/content/" + content.getId();
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("importError", "책을 불러오지 못했습니다.");
+			return "redirect:/book";
+		}
+	}
+
+	@GetMapping("/{id}")
+	public String detail(
+			@PathVariable("id") Long id,
+			Model model,
+			ReviewForm reviewForm) {
+		Content content = contentService.getContent(id);
+		List<Review> reviews = reviewService.getByContent(content);
+		model.addAttribute("content", content);
+		model.addAttribute("averageRating", contentService.getAverageRating(content));
+		model.addAttribute("reviewCount", contentService.getReviewCount(content));
+		model.addAttribute("reviews", reviews);
+		model.addAttribute("commentCounts", reviewCommentService.getCountMap(reviews));
+		return "detail";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/add")
+	public String addForm(ContentForm contentForm, @RequestParam ContentType type) {
+		contentForm.setType(type);
+		return "content_form";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/add")
+	public String add(
+			@Valid ContentForm contentForm,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "content_form";
+		}
+		contentService.create(
+				contentForm.getTitle(),
+				contentForm.getCreator(),
+				contentForm.getImageUrl(),
+				contentForm.getType());
+		if (contentForm.getType() == ContentType.MOVIE) {
+			return "redirect:/movie";
+		}
+		return "redirect:/book";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/modify/{id}")
+	public String modifyForm(
+			ContentForm contentForm,
+			@PathVariable("id") Long id) {
+		Content content = contentService.getContent(id);
+		contentForm.setTitle(content.getTitle());
+		contentForm.setCreator(content.getCreator());
+		contentForm.setImageUrl(content.getImageUrl());
+		contentForm.setType(content.getType());
+		return "content_form";
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/modify/{id}")
+	public String modify(
+			@Valid ContentForm contentForm,
+			BindingResult bindingResult,
+			@PathVariable("id") Long id) {
+		if (bindingResult.hasErrors()) {
+			return "content_form";
+		}
+		Content content = contentService.getContent(id);
+		contentService.modify(
+				content,
+				contentForm.getTitle(),
+				contentForm.getCreator(),
+				contentForm.getImageUrl());
+		return "redirect:/content/" + id;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/delete/{id}")
+	public String delete(@PathVariable("id") Long id) {
+		Content content = contentService.getContent(id);
+		ContentType type = content.getType();
+		contentService.delete(content);
+		if (type == ContentType.MOVIE) {
+			return "redirect:/movie";
+		}
+		return "redirect:/book";
+	}
+}

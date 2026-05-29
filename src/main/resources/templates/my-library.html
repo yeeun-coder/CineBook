@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>내 영화 기록</title>
+    <title>내 서재</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -12,19 +12,19 @@
 
 <body>
 
-<header th:replace="~{fragments/header :: header('movie', ${type}, '')}"></header>
+<header th:replace="~{fragments/header :: header('book', ${type}, '')}"></header>
 
 <main>
 
     <div class="title-area">
         <div class="title-left">
-            <h1>내 영화 기록</h1>
+            <h1>내 서재</h1>
             <p th:text="'총 ' + ${paging.totalElements} + '개의 리뷰를 작성했습니다.'"></p>
         </div>
 
         <div class="title-right">
-            <a href="/content/add?type=MOVIE" class="top-btn dark-btn">
-                영화 추가 +
+            <a href="/content/add?type=BOOK" class="top-btn dark-btn">
+                책 추가 +
             </a>
         </div>
     </div>
@@ -54,7 +54,7 @@
 
     <div class="pagination" th:if="${paging.totalPages > 0}">
         <a th:each="pageNum : ${#numbers.sequence(0, paging.totalPages - 1)}"
-           th:href="@{/my-movie(page=${pageNum})}"
+           th:href="@{/my-library(page=${pageNum})}"
            th:text="${pageNum + 1}"
            th:class="'page' + (${pageNum} == ${paging.number} ? ' active' : '')">
         </a>

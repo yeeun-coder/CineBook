@@ -1,116 +1,112 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
-    <title>CineBook</title>
-
+    <title>CineBook - 책</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
 
-<header class="header">
-
-    <div class="logo">
-	    <img src="/images/logo2.png" alt="logo">
-	</div>
-
-    <div class="search-box">
-	    <form action="/content/movie/search">
-	        <input type="text"
-	               name="keyword"
-	               placeholder="책, 영화 제목, 저자, 감독 검색">
-	    </form>
-	
-	</div>
-
-    <nav class="menu">
-        <a href="/movie">영화</a>
-        <a href="/book" class="active">책</a>
-        <a href="#">사용자 설정</a>
-    </nav>
-
-</header>
+<header th:replace="~{fragments/header :: header('book', ${type}, ${kw})}"></header>
 
 <main>
 
     <div class="title-area">
-	    <div class="title-left">
-	        <h1>전체 책</h1>
-	        <p>총 1294권의 책이 있습니다.</p>
-	    </div>
-	    
-	    <div class="title-right">
-	        <a href="/my-library" class="library-btn">
-	            내 서재 보기
-	        </a>
-	    </div>
-	</div>
+        <div class="title-left">
+            <h1 th:text="${kw != null and !kw.isBlank()} ? '책 검색 결과' : '전체 책'">전체 책</h1>
+            <p th:if="${kw == null or kw.isBlank()}"
+               th:text="'총 ' + ${paging.totalElements} + '권의 책이 있습니다.'"></p>
+            <p th:if="${kw != null and !kw.isBlank()}"
+               th:text="'「' + ${kw} + '」 검색 · 내 서재 ' + ${paging.totalElements} + '권'"></p>
+        </div>
 
-    <section class="content">
-    	<a href="/content/1" class="card-link">
-		    <div class="card">
-		        <div class="category movie">영화</div>
-		        <img src="https://i.imgur.com/8Km9tLL.jpg">
-		        <h3>인터스텔라</h3>
-		        <p class="author">크리스토퍼 놀란</p>
-		        <div class="rating">
-				    <i class="fa-solid fa-star"></i>
-				    4.8
-				</div>
-				<div class="info">
-				    <span>
-				        <i class="fa-regular fa-comment"></i>
-				        120
-				    </span>
-				    <span>
-				        <i class="fa-regular fa-eye"></i>
-				        532
-				    </span>
-				</div>
-		    </div>
-		</a>
-		<a href="/content/2" class="card-link">
-		    <div class="card">
-		        <div class="category book">책</div>
-		        <img src="https://image.yes24.com/goods/119242056/XL">
-		        <h3>바깥은 여름</h3>
-		        <p class="author">김애란</p>
-		        <div class="rating">
-				    <i class="fa-solid fa-star"></i>
-				    4.5
-				</div>
-		        <div class="info">
-				    <span>
-				        <i class="fa-regular fa-comment"></i>
-				        15
-				    </span>
-				    <span>
-				        <i class="fa-regular fa-eye"></i>
-				        30
-				    </span>
-				</div>
-		    </div>
-	    </a>
-	</section>
+        <div class="title-right">
+            <a href="/review/write?searchType=BOOK" class="library-btn" sec:authorize="isAuthenticated()">
+                리뷰 작성하기
+            </a>
+        </div>
+    </div>
+
+    <div class="auth-error" th:if="${apiError}" th:text="${apiError}"></div>
+    <div class="auth-error" th:if="${importError}" th:text="${importError}"></div>
+
+    <!-- 카카오 API 검색 결과 -->
+    <section th:if="${kw != null and !kw.isBlank()}" class="search-section">
+        <h2 class="section-title">카카오 도서 검색</h2>
+        <p class="section-desc">책을 선택하면 내 서재에 추가되고 리뷰를 작성할 수 있습니다.</p>
+
+        <div class="content" th:if="${apiBooks != null and !apiBooks.isEmpty()}">
+            <div th:each="book : ${apiBooks}" class="card card-api">
+                <div class="category book">검색</div>
+                <img th:src="${book.imageUrl}" th:alt="${book.title}"
+                     onerror="this.src='https://via.placeholder.com/200x280?text=No+Cover'">
+                <h3 th:text="${book.title}"></h3>
+                <p class="author" th:text="${book.creator}"></p>
+                <p class="publisher" th:if="${book.publisher}" th:text="${book.publisher}"></p>
+
+                <form th:action="@{/content/book/import}" method="post" class="import-form">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <input type="hidden" name="isbn" th:value="${book.isbn}">
+                    <input type="hidden" name="title" th:value="${book.title}">
+                    <input type="hidden" name="creator" th:value="${book.creator}">
+                    <input type="hidden" name="imageUrl" th:value="${book.imageUrl}">
+                    <button type="submit" class="import-btn">리뷰 작성하기</button>
+                </form>
+            </div>
+        </div>
+
+        <p class="empty-review" th:if="${apiBooks == null or apiBooks.isEmpty()}">
+            검색 결과가 없습니다. 다른 키워드로 검색해 보세요.
+        </p>
+    </section>
+
+    <!-- 내 서재 (DB에 저장된 책) -->
+    <section class="search-section">
+        <h2 class="section-title"
+            th:text="${kw != null and !kw.isBlank()} ? '내 서재' : '등록된 책'">등록된 책</h2>
+
+        <div class="content" th:if="${cards != null and !cards.isEmpty()}">
+            <a th:each="card : ${cards}"
+               th:href="@{|/content/${card.content.id}|}"
+               class="card-link">
+                <div class="card">
+                    <div class="category book">책</div>
+                    <img th:src="${card.content.imageUrl}" th:alt="${card.content.title}"
+                         onerror="this.src='https://via.placeholder.com/200x280?text=No+Cover'">
+                    <h3 th:text="${card.content.title}"></h3>
+                    <p class="author" th:text="${card.content.creator}"></p>
+                    <div class="rating">
+                        <i class="fa-solid fa-star"></i>
+                        <span th:text="${#numbers.formatDecimal(card.averageRating, 1, 1)}">0.0</span>
+                    </div>
+                    <div class="info">
+                        <span>
+                            <i class="fa-regular fa-comment"></i>
+                            <span th:text="${card.reviewCount}">0</span>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <p class="empty-review" th:if="${cards == null or cards.isEmpty()}">
+            아직 등록된 책이 없습니다. 위에서 검색해 책을 추가해 보세요.
+        </p>
+    </section>
+
+    <div class="pagination" th:if="${paging.totalPages > 0}">
+        <a th:each="pageNum : ${#numbers.sequence(0, paging.totalPages - 1)}"
+           th:href="@{/book(page=${pageNum}, kw=${kw})}"
+           th:text="${pageNum + 1}"
+           th:class="'page' + (${pageNum} == ${paging.number} ? ' active' : '')">
+        </a>
+    </div>
+
 </main>
 </body>
 </html>
-<!-- <section class="content">
-
-    <div class="card" th:each="book : ${books}">
-
-        <img th:src="${book.coverImage}">
-
-        <h3 th:text="${book.title}"></h3>
-
-        <p th:text="${book.author}"></p>
-
-        <span th:text="${book.rating}"></span>
-
-    </div>
-
-</section> -->

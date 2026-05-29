@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>사용자 설정 - CineBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/settings.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<header th:replace="~{fragments/header :: header('settings', ${type}, ${kw})}"></header>
+
+<main class="settings-page">
+
+    <h1 class="settings-page-title">사용자 설정</h1>
+
+    <div class="settings-layout">
+
+        <!-- 프로필 사이드바 -->
+        <aside class="profile-card">
+            <div class="profile-avatar"></div>
+            <p class="profile-name" th:text="${user.nickname}">닉네임</p>
+
+            <div class="profile-stat-block">
+                <span class="profile-stat-label">리뷰</span>
+                <span class="profile-stat-value" th:text="${reviewCount}">0</span>
+            </div>
+
+            <div class="profile-bottom-row">
+                <div class="profile-stat-block profile-stat-inline">
+                    
+                    <span class="profile-stat-value profile-stars">
+                        <i class="fa-solid fa-star"></i>
+                        <span th:text="${#numbers.formatDecimal(totalStarsGiven, 1, 1)}">0</span>
+                    </span>
+                </div>
+                <a href="/user/settings/edit" class="profile-edit-btn">프로필 편집</a>
+            </div>
+        </aside>
+
+        <!-- 내가 쓴 리뷰 -->
+        <section class="my-reviews-section">
+
+            <div class="my-reviews-header">
+                <h2>내가 쓴 리뷰</h2>
+                <div class="filters">
+                    <form th:action="@{/user/settings}" method="get" class="filter-form">
+                        <select name="filter" onchange="this.form.submit()">
+                            <option value="ALL" th:selected="${filter == 'ALL'}">전체</option>
+                            <option value="MOVIE" th:selected="${filter == 'MOVIE'}">영화</option>
+                            <option value="BOOK" th:selected="${filter == 'BOOK'}">책</option>
+                        </select>
+                        <select name="sort" disabled title="최신순 고정">
+                            <option selected>최신순</option>
+                        </select>
+                    </form>
+                </div>
+            </div>
+
+            <div class="review-rows">
+                <div th:each="review : ${paging.content}" class="review-list-item">
+
+                    <!-- 별점 + 설정: 리스트 항목 안 우측 상단 -->
+                    <div class="review-row-actions">
+                        <span class="review-score">
+                            <i class="fa-solid fa-star"></i>
+                            <span th:text="${review.rating}"></span>
+                        </span>
+                        <div class="review-menu">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                            <div class="review-menu-dropdown">
+                                <a th:href="@{|/review/modify/${review.id}|}">수정</a>
+                                <a th:href="@{|/review/delete/${review.id}|}">삭제</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a th:href="@{|/review/${review.id}|}" class="review-row-link">
+                        <img class="review-thumb"
+                             th:src="${review.content.imageUrl}"
+                             th:alt="${review.content.title}"
+                             onerror="this.src='https://via.placeholder.com/56x80?text=Cover'">
+
+                        <div class="review-row-body">
+                            <span th:class="'type-tag ' + (${review.content.type.name() == 'MOVIE'} ? 'movie' : 'book')"
+                                  th:text="${review.content.type.name() == 'MOVIE'} ? '영화' : '책'">
+                            </span>
+                            <h3 th:text="${review.content.title}"></h3>
+                            <p class="review-date"
+                               th:text="${#temporals.format(review.createdAt, 'yyyy.M.dd.')}"></p>
+                            <p class="review-quote" th:text="'“' + ${review.shortReview} + '”'"></p>
+                        </div>
+                    </a>
+                </div>
+
+                <p th:if="${paging.totalElements == 0}" class="empty-review">
+                    아직 작성한 리뷰가 없습니다.
+                    <a href="/review/write">리뷰 작성하기</a>
+                </p>
+            </div>
+
+            <div class="pagination" th:if="${paging.totalPages > 1}">
+                <a th:each="pageNum : ${#numbers.sequence(0, paging.totalPages - 1)}"
+                   th:href="@{/user/settings(page=${pageNum}, filter=${filter})}"
+                   th:text="${pageNum + 1}"
+                   th:class="'page' + (${pageNum} == ${paging.number} ? ' active' : '')">
+                </a>
+            </div>
+
+        </section>
+    </div>
+
+</main>
+</body>
+</html>

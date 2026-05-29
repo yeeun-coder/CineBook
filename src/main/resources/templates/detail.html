@@ -1,125 +1,94 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
     <meta charset="UTF-8">
-
-    <title>상세페이지</title>
-
+    <title th:text="${content.title} + ' - CineBook'">상세페이지</title>
     <link rel="stylesheet" href="/css/detail.css">
-
     <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
 
 <div class="detail-container">
 
-    <!-- 뒤로가기 -->
-
-    <a href="/" class="back-btn">
+    <a th:href="${content.type.name() == 'MOVIE'} ? '/movie' : '/book'" class="back-btn">
         <i class="fa-solid fa-chevron-left"></i>
         뒤로가기
     </a>
 
-    <!-- 상단 -->
-
     <div class="top-section">
 
-        <!-- 포스터 -->
-
-        <img class="poster"
-             src="https://image.yes24.com/goods/119242056/XL">
-
-        <!-- 정보 -->
+        <img class="poster" th:src="${content.imageUrl}" th:alt="${content.title}">
 
         <div class="content-info">
 
-            <div class="category book">
-                책
+            <div th:class="'category ' + (${content.type.name() == 'MOVIE'} ? 'movie' : 'book')"
+                 th:text="${content.type.name() == 'MOVIE'} ? '영화' : '책'">
             </div>
 
-            <h1>바깥은 여름</h1>
+            <h1 th:text="${content.title}"></h1>
 
-            <p class="creator">
-                저자 김애란
+            <p class="creator"
+               th:text="(${content.type.name() == 'MOVIE'} ? '감독 ' : '저자 ') + ${content.creator}">
             </p>
 
             <div class="rating">
                 <i class="fa-solid fa-star"></i>
-                4.5
+                <span th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0.0</span>
             </div>
 
             <div class="sub-info">
-
                 <span>
                     <i class="fa-regular fa-comment"></i>
-                    15
+                    <span th:text="${reviewCount}">0</span>
                 </span>
-
-                <span>
-                    <i class="fa-regular fa-eye"></i>
-                    20
-                </span>
-
             </div>
 
-            <button class="review-btn">
+            <a th:href="@{/review/write(contentId=${content.id}, searchType=${content.type})}"
+               class="review-btn"
+               sec:authorize="isAuthenticated()">
                 리뷰 작성하기
-            </button>
+            </a>
+            <a href="/user/signin" class="review-btn" sec:authorize="isAnonymous()">
+                로그인 후 리뷰 작성
+            </a>
 
         </div>
-
     </div>
-
-    <!-- 리뷰 리스트 -->
 
     <div class="review-list">
 
-        <div class="review-card">
+        <a th:each="review : ${reviews}"
+           th:href="@{|/review/${review.id}|}"
+           class="review-card review-card-link">
 
             <div class="review-header">
-
                 <div class="profile"></div>
-
                 <div class="review-user">
-
-                    <span class="nickname">
-                        독서광인티티
+                    <span class="nickname" th:text="${review.author.nickname}"></span>
+                    <span class="score" th:text="'★ ' + ${review.rating}"></span>
+                    <span class="time"
+                          th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd HH:mm')}">
                     </span>
-
-                    <span class="score">
-                        ★ 5.0
-                    </span>
-
-                    <span class="time">
-                        2시간 전
-                    </span>
-
                 </div>
-
             </div>
 
-            <p class="review-text">
-                모든 현대인들의 감정을 고스란히 느끼게 해주는 소설이다.
-            </p>
+            <p class="short-review-line" th:if="${review.shortReview}" th:text="${review.shortReview}"></p>
+            <p class="review-text" th:text="${#strings.abbreviate(review.reviewText, 120)}"></p>
 
             <div class="review-bottom">
-
-                <span>
+                <span class="comment-stat">
                     <i class="fa-regular fa-comment"></i>
-                    1
+                    <span th:text="${commentCounts[review.id]}">0</span>
                 </span>
-
-                <span>
-                    <i class="fa-regular fa-eye"></i>
-                    5
-                </span>
-
             </div>
 
-        </div>
+        </a>
+
+        <p th:if="${#lists.isEmpty(reviews)}" class="empty-review">아직 리뷰가 없습니다.</p>
 
     </div>
 

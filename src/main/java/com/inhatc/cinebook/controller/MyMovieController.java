@@ -6,9 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class MyMovieController {
 
-    @GetMapping("/my-movie")
-    public String myMovie() {
+	@GetMapping("/my-movie")
+	public String myMovie() {
+		return "redirect:/user/settings?filter=MOVIE";
+	}
 
-        return "my-movie";
-    }
+	@GetMapping("/my-library")
+	public String myLibrary() {
+		return "redirect:/user/settings?filter=BOOK";
+	}
 }

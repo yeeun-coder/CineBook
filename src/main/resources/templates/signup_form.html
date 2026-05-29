@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 - CineBook</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<main class="auth-page">
+    <h1>CineBook 회원가입</h1>
+
+    <form th:action="@{/user/signup}" method="post" th:object="${userForm}">
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+        <div th:replace="~{form_errors :: globalErrorsFragment}"></div>
+
+        <input type="text" th:field="*{loginId}" placeholder="아이디">
+        <input type="text" th:field="*{nickname}" placeholder="닉네임">
+        <input type="password" th:field="*{password1}" placeholder="비밀번호">
+        <input type="password" th:field="*{password2}" placeholder="비밀번호 확인">
+        <button type="submit">가입하기</button>
+    </form>
+
+    <p>이미 계정이 있으신가요? <a href="/user/signin">로그인</a></p>
+</main>
+
+</body>
+</html>

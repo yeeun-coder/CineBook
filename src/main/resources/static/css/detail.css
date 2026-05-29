@@ -92,6 +92,10 @@ body{
 /* 버튼 */
 
 .review-btn{
+    display:inline-block;
+    line-height:55px;
+    text-align:center;
+    text-decoration:none;
     width:180px;
     height:55px;
 
@@ -106,6 +110,47 @@ body{
     margin-top:30px;
 
     cursor:pointer;
+}
+
+.empty-review {
+    color: #888;
+    padding: 24px 0;
+}
+
+.review-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.review-card-link:hover {
+    background: #fafafa;
+}
+
+.short-review-line {
+    font-weight: 600;
+    margin: 8px 0 4px;
+    color: #333;
+}
+
+.comment-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #666;
+    font-size: 14px;
+}
+
+.comment-stat i {
+    font-size: 15px;
+}
+
+.review-bottom a {
+    margin-right: 12px;
+    color: #666;
+    text-decoration: none;
 }
 
 /* 리뷰 */

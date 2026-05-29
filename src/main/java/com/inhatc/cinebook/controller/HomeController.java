@@ -1,27 +1,13 @@
 package com.inhatc.cinebook.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-//@Controller
-//public class HomeController {
-//
-//    @GetMapping("/")
-//    public String home(Model model) {
-//
-//        model.addAttribute("books", bookService.findAll());
-//
-//        return "index";
-//    }
-//}
 
 @Controller
 public class HomeController {
 
-    @GetMapping("/")
-    public String home() {
-
-        return "index";
-    }
+	@GetMapping("/")
+	public String home() {
+		return "redirect:/movie";
+	}
 }
