@@ -246,6 +246,13 @@ body {
     background: #333;
 }
 
+.btn-back {
+    text-decoration: none;
+    color: #333;
+    font-size: 28px;
+    font-weight: bold;
+}
+
 /* ===== 리뷰 상세 / 댓글 ===== */
 
 .review-detail-page .short-review-line {

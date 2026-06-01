@@ -70,8 +70,8 @@
 
     <!-- 내 서재 (DB에 저장된 책) -->
     <section class="search-section">
-        <h2 class="section-title"
-            th:text="${kw != null and !kw.isBlank()} ? '내 서재' : '등록된 책'">등록된 책</h2>
+        <!-- <h2 class="section-title"
+            th:text="${kw != null and !kw.isBlank()} ? '내 서재' : '등록된 책'">등록된 책</h2> -->
 
         <div class="content" th:if="${cards != null and !cards.isEmpty()}">
             <a th:each="card : ${cards}"

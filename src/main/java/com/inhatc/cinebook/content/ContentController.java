@@ -32,19 +32,46 @@ public class ContentController {
 
 	@GetMapping("/search")
 	public String search(
-			@RequestParam String keyword,
-			@RequestParam(defaultValue = "MOVIE") ContentType type,
-			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(name = "keyword") String keyword,
+	        @RequestParam(name = "type", defaultValue = "MOVIE") ContentType type,
+	        @RequestParam(name = "page", defaultValue = "0") int page,
 			Model model) {
 
 		if (type == ContentType.MOVIE) {
-			contentService.searchMovie(keyword);
-			model.addAttribute("paging", contentService.getList(type, page, keyword));
-			model.addAttribute("cards", contentService.toCardViews(
-					contentService.getList(type, page, keyword).getContent()));
-			model.addAttribute("kw", keyword);
-			model.addAttribute("type", type);
-			return "movie";
+
+		    model.addAttribute("type", ContentType.MOVIE);
+		    model.addAttribute("kw", keyword);
+		    model.addAttribute("searchPage", page);
+
+		    // KMDB API 검색
+		    if (!contentService.isKmdbApiConfigured()) {
+
+		        model.addAttribute("apiMovies", List.of());
+
+		    } else {
+
+		        try {
+
+		            model.addAttribute(
+		                    "apiMovies",
+		                    contentService.searchMoviesFromTmdb(keyword, page));
+
+		        } catch (Exception e) {
+
+		            model.addAttribute("apiMovies", List.of());
+		            model.addAttribute("apiError", e.getMessage());
+		        }
+		    }
+
+		    var paging = contentService.getList(type, page, keyword);
+
+		    model.addAttribute("paging", paging);
+
+		    model.addAttribute(
+		            "cards",
+		            contentService.toCardViews(paging.getContent()));
+
+		    return "movie";
 		}
 
 		return searchBooks(keyword, page, model);
@@ -77,10 +104,10 @@ public class ContentController {
 
 	@PostMapping("/book/import")
 	public String importBook(
-			@RequestParam String isbn,
-			@RequestParam String title,
-			@RequestParam String creator,
-			@RequestParam(required = false) String imageUrl,
+			@RequestParam(name = "isbn") String isbn,
+			@RequestParam(name = "title") String title,
+			@RequestParam(name = "creator") String creator,
+			@RequestParam(name = "imageUrl", required = false) String imageUrl,
 			RedirectAttributes redirectAttributes) {
 		try {
 			Content content = contentService.findOrCreateBook(isbn, title, creator, imageUrl);

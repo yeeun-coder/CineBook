@@ -33,6 +33,9 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+
 
 @RequiredArgsConstructor
 @Service
@@ -104,6 +107,10 @@ public class ContentService {
 
 	public boolean isKakaoApiConfigured() {
 		return kakaoApiKey != null && !kakaoApiKey.isBlank();
+	}
+	
+	public boolean isKmdbApiConfigured() {
+		return movieApiKey != null && !movieApiKey.isBlank();
 	}
 
 	public List<BookSearchView> searchBooksFromKakao(String keyword, int page) {
@@ -190,17 +197,76 @@ public class ContentService {
 		return text.replaceAll("<[^>]*>", "").trim();
 	}
 
-	public void searchMovie(String keyword) {
-		if (movieApiKey.isBlank()) {
-			return;
-		}
-		String url = "https://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp"
-				+ "?collection=kmdb_new2"
-				+ "&detail=Y"
-				+ "&title=" + keyword
-				+ "&ServiceKey=" + movieApiKey;
-		String result = restTemplate.getForObject(url, String.class);
-		System.out.println(result);
+	public List<MovieSearchView> searchMoviesFromTmdb(String keyword, int page) {
+
+	    if (!isKmdbApiConfigured()) {
+	        return List.of();
+	    }
+
+	    String url =
+	            "https://api.koreafilm.or.kr/openapi-data2/wisenut/search_api/search_json2.jsp"
+	            + "?collection=kmdb_new2"
+	            + "&detail=Y"
+	            + "&title=" + keyword
+	            + "&ServiceKey=" + movieApiKey;
+
+	    try {
+
+	        String json = restTemplate.getForObject(url, String.class);
+
+	        System.out.println("URL = " + url);
+	        System.out.println("JSON = " + json);
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        JsonNode root = mapper.readTree(json);
+
+	        List<MovieSearchView> movies = new ArrayList<>();
+
+	        JsonNode results =
+	                root.path("Data")
+	                    .get(0)
+	                    .path("Result");
+
+	        for (JsonNode movie : results) {
+
+	            String title =
+	                    movie.path("title")
+	                         .asText()
+	                         .replace("!HS", "")
+	                         .replace("!HE", "")
+	                         .trim();
+
+	            String director =
+	                    movie.path("directors")
+	                         .path("director")
+	                         .get(0)
+	                         .path("directorNm")
+	                         .asText();
+
+	            String poster =
+	                    movie.path("posters")
+	                         .asText();
+
+	            if (poster.contains("|")) {
+	                poster = poster.split("\\|")[0];
+	            }
+
+	            movies.add(
+	                    new MovieSearchView(
+	                            title,
+	                            director,
+	                            poster));
+	        }
+
+	        System.out.println("영화 개수 = " + movies.size());
+
+	        return movies;
+
+	    } catch (Exception e) {
+
+	        e.printStackTrace();   // 추가
+	        throw new IllegalStateException("영화 API 호출 실패", e);
+	    }
 	}
 
 	private Specification<Content> search(ContentType type, String kw) {

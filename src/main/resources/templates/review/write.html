@@ -13,6 +13,11 @@
 
 <div class="review-write-page">
 
+	<a th:href="@{|/content/${selectedContent.id}|}"
+	   class="btn-back">
+	    ←
+	</a>
+
     <h1 class="page-title">리뷰 작성</h1>
 
     <!-- 탭: 영화 / 책 -->
@@ -22,6 +27,7 @@
         <a th:href="@{/review/write(searchType='BOOK', keyword=${keyword}, contentId=${selectedContent != null ? selectedContent.id : null})}"
            th:class="'tab' + (${searchType.name() == 'BOOK'} ? ' active' : '')">책 검색</a>
     </div>
+    
 
     <!-- 검색 (수정 모드가 아닐 때) -->
     <div class="search-block" th:if="${reviewId == null}">
@@ -60,7 +66,7 @@
         </div>
 
         <!-- 영화 DB 검색 결과 -->
-        <div class="search-results" th:if="${searchType.name() == 'MOVIE' and movieResults != null and !movieResults.isEmpty()}">
+        <!-- <div class="search-results" th:if="${searchType.name() == 'MOVIE' and movieResults != null and !movieResults.isEmpty()}">
             <div class="search-result-item" th:each="movie : ${movieResults}">
                 <img th:src="${movie.imageUrl}" th:alt="${movie.title}"
                      onerror="this.src='https://via.placeholder.com/48x64?text=Movie'">
@@ -71,7 +77,32 @@
                 <a th:href="@{/review/write(searchType='MOVIE', contentId=${movie.id})}"
                    class="select-btn">선택</a>
             </div>
-        </div>
+        </div> -->
+        <!-- 영화 API 검색 결과 -->
+		<div class="search-results"
+		     th:if="${searchType.name() == 'MOVIE'
+		             and apiMovies != null
+		             and !apiMovies.isEmpty()}">
+		
+		    <div class="search-result-item"
+		         th:each="movie : ${apiMovies}">
+		
+		        <img th:src="${movie.imageUrl}"
+		             th:alt="${movie.title}"
+		             onerror="this.src='https://via.placeholder.com/48x64?text=Movie'">
+		
+		        <div class="result-info">
+		            <strong th:text="${movie.title}"></strong>
+		            <span th:text="${movie.creator}"></span>
+		        </div>
+		
+		        <!-- 선택 버튼 -->
+		        <button type="button" class="select-btn">
+		            선택
+		        </button>
+		
+		    </div>
+		</div>
     </div>
 
     <!-- 선택된 콘텐츠 -->

@@ -21,11 +21,30 @@ public class MovieController {
 			Model model,
 			@RequestParam(value = "page", defaultValue = "0") int page,
 			@RequestParam(value = "kw", defaultValue = "") String kw) {
+		model.addAttribute("type", ContentType.MOVIE);
+		model.addAttribute("kw", kw);
+		model.addAttribute("searchPage", page);
+		
+		if (!kw.isBlank()) {
+			if (!contentService.isKmdbApiConfigured()) {
+				model.addAttribute("apiError",
+						"영화 API 키가 없습니다. application.properties의 cinebook.movie.api-key 를 설정해 주세요.");
+				model.addAttribute("apiMovies", java.util.List.of());
+			} else {
+				try {
+					model.addAttribute("apiMovies", contentService.searchMoviesFromTmdb(kw, page));
+				} catch (IllegalStateException e) {
+					model.addAttribute("apiMovies", java.util.List.of());
+					model.addAttribute("apiError", e.getMessage());
+				}
+			}
+		}
+		
+		var paging = contentService.getList(ContentType.MOVIE, page, kw);
 		model.addAttribute("paging", contentService.getList(ContentType.MOVIE, page, kw));
 		model.addAttribute("cards", contentService.toCardViews(
 				contentService.getList(ContentType.MOVIE, page, kw).getContent()));
-		model.addAttribute("kw", kw);
-		model.addAttribute("type", ContentType.MOVIE);
+		
 		return "movie";
 	}
 }

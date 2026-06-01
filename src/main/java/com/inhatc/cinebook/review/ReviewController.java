@@ -133,7 +133,7 @@ public class ReviewController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/comment/delete/{commentId}")
 	public String deleteComment(
-			@PathVariable Long commentId,
+			@PathVariable("commentId") Long commentId,
 			Principal principal) {
 		Long reviewId = reviewCommentService.delete(commentId, principal.getName());
 		return "redirect:/review/" + reviewId;
@@ -206,23 +206,44 @@ public class ReviewController {
 	}
 
 	private void loadSearchResults(ContentType searchType, String keyword, Model model) {
-		if (searchType == ContentType.BOOK) {
-			if (!contentService.isKakaoApiConfigured()) {
-				model.addAttribute("apiError",
-						"카카오 API 키가 없습니다. application.properties의 cinebook.kakao.api-key 를 설정해 주세요.");
-				model.addAttribute("apiBooks", List.<BookSearchView>of());
-			} else {
-				try {
-					model.addAttribute("apiBooks", contentService.searchBooksFromKakao(keyword, 0));
-					model.addAttribute("apiError", null);
-				} catch (IllegalStateException e) {
-					model.addAttribute("apiBooks", List.<BookSearchView>of());
-					model.addAttribute("apiError", e.getMessage());
-				}
-			}
-		} else {
-			var movies = contentService.getList(ContentType.MOVIE, 0, keyword).getContent();
-			model.addAttribute("movieResults", movies);
-		}
+
+	    if (searchType == ContentType.BOOK) {
+
+	        if (!contentService.isKakaoApiConfigured()) {
+
+	            model.addAttribute("apiError",
+	                    "카카오 API 키가 없습니다. application.properties의 cinebook.kakao.api-key 를 설정해 주세요.");
+	            model.addAttribute("apiBooks", List.<BookSearchView>of());
+
+	        } else {
+
+	            try {
+	                model.addAttribute("apiBooks",
+	                        contentService.searchBooksFromKakao(keyword, 0));
+	                model.addAttribute("apiError", null);
+
+	            } catch (IllegalStateException e) {
+
+	                model.addAttribute("apiBooks", List.<BookSearchView>of());
+	                model.addAttribute("apiError", e.getMessage());
+	            }
+	        }
+	        	
+	    } else { 
+
+	        try {
+
+	            model.addAttribute(
+	                    "apiMovies",
+	                    contentService.searchMoviesFromTmdb(keyword, 0));
+
+	            model.addAttribute("apiError", null);
+
+	        } catch (Exception e) {
+
+	            model.addAttribute("apiMovies", List.of());
+	            model.addAttribute("apiError", e.getMessage());
+	        }
+	    }
 	}
 }

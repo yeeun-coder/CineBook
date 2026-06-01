@@ -26,17 +26,21 @@ public class MyMovieController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             Model model) {
 
-	    User user = userService.get(principal.getName());
+        if (principal == null) {
+        	return "redirect:/user/signin";
+        }
 
-	    model.addAttribute(
-	        "paging",
-	        reviewService.getByUserFiltered(user, "MOVIE", page)
-	    );
+        User user = userService.get(principal.getName());
 
-	    model.addAttribute("type", ContentType.MOVIE);
+        model.addAttribute(
+            "paging",
+            reviewService.getByUserFiltered(user, "MOVIE", page)
+        );
 
-	    return "my-movie";
-	}
+        model.addAttribute("type", ContentType.MOVIE);
+
+        return "my-movie";
+    }
 //    @GetMapping("/my-movie")
 //	public String myMovie() {
 //		return "redirect:/user/settings?filter=MOVIE";
@@ -46,6 +50,10 @@ public class MyMovieController {
     public String myLibrary(Principal principal,
             @RequestParam(name = "page", defaultValue = "0") int page,
             Model model) {
+    	
+    	if (principal == null) {
+    		return "redirect:/user/signin";
+        }
 
 	    User user = userService.get(principal.getName());
 
@@ -54,7 +62,7 @@ public class MyMovieController {
 	        reviewService.getByUserFiltered(user, "BOOK", page)
 	    );
 
-	    model.addAttribute("type", ContentType.MOVIE);
+	    model.addAttribute("type", ContentType.BOOK);
 
 	    return "my-library";
 	}
