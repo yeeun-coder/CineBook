@@ -108,7 +108,7 @@ public class ContentController {
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/add")
-	public String addForm(ContentForm contentForm, @RequestParam ContentType type) {
+	public String addForm(ContentForm contentForm, @RequestParam(name = "type") ContentType type) {
 		contentForm.setType(type);
 		return "content_form";
 	}

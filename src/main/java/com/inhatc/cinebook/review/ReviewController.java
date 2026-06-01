@@ -38,9 +38,9 @@ public class ReviewController {
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/write")
 	public String writeForm(
-			@RequestParam(defaultValue = "BOOK") ContentType searchType,
-			@RequestParam(defaultValue = "") String keyword,
-			@RequestParam(required = false) Long contentId,
+			@RequestParam(name = "searchType", defaultValue = "BOOK") ContentType searchType,
+			@RequestParam(name = "keyword", defaultValue = "") String keyword,
+			@RequestParam(name = "contentId", required = false) Long contentId,
 			Model model,
 			ReviewForm reviewForm) {
 
@@ -61,10 +61,10 @@ public class ReviewController {
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/write/select-book")
 	public String selectBook(
-			@RequestParam String isbn,
-			@RequestParam String title,
-			@RequestParam String creator,
-			@RequestParam(required = false) String imageUrl) {
+			@RequestParam(name = "isbn") String isbn,
+			@RequestParam(name = "title") String title,
+			@RequestParam(name = "creator") String creator,
+			@RequestParam(name = "imageUrl", required = false) String imageUrl) {
 		Content content = contentService.findOrCreateBook(isbn, title, creator, imageUrl);
 		return "redirect:/review/write?searchType=BOOK&contentId=" + content.getId();
 	}
@@ -72,11 +72,11 @@ public class ReviewController {
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/create")
 	public String create(
-			@RequestParam Long contentId,
+			@RequestParam(name = "contentId") Long contentId,
 			@Valid ReviewForm reviewForm,
 			BindingResult bindingResult,
-			@RequestParam(defaultValue = "BOOK") ContentType searchType,
-			@RequestParam(defaultValue = "") String keyword,
+			@RequestParam(name = "searchType", defaultValue = "BOOK") ContentType searchType,
+			@RequestParam(name = "keyword", defaultValue = "") String keyword,
 			Model model,
 			Principal principal) {
 

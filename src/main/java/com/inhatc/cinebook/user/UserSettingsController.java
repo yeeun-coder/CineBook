@@ -30,9 +30,9 @@ public class UserSettingsController {
 	@GetMapping("/settings")
 	public String settings(
 			Principal principal,
-			@RequestParam(defaultValue = "ALL") String filter,
-			@RequestParam(defaultValue = "0") int page,
-			Model model) {
+			@RequestParam(name = "filter", defaultValue = "ALL") String filter,
+	        @RequestParam(name = "page", defaultValue = "0") int page,
+	        Model model) {
 		User user = userService.get(principal.getName());
 		model.addAttribute("user", user);
 		model.addAttribute("reviewCount", reviewService.countByUser(user));
