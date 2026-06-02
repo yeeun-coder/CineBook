@@ -58,7 +58,7 @@ body{
 .content-info h1{
     font-size:42px;
 
-    margin-top:15px;
+    margin-top:8px;
 }
 
 .creator{
@@ -223,4 +223,36 @@ body{
     margin-bottom:20px;
 
     font-size:14px;
+}
+
+/* 영화/책 태그 */
+
+.category{
+    display:inline-flex;
+
+    align-items:center;
+    justify-content:center;
+
+    width:fit-content;
+
+    padding:6px 12px;
+
+    border-radius:10px;
+
+    font-size:13px;
+    font-weight:600;
+
+    margin-bottom:10px;
+}
+
+.category.movie{
+    border:1px solid #d7c8ff;
+    color:#8f72ff;
+    background:#f7f4ff;
+}
+
+.category.book{
+    border:1px solid #ffbdbd;
+    color:#ff8a8a;
+    background:#fff7f7;
 }
