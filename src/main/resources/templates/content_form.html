@@ -9,21 +9,147 @@
 
 <body>
 
-<div class="review-container">
+<div class="review-write-page">
 
-    <h2 th:text="${contentForm.type.name() == 'MOVIE'} ? '영화 추가' : '책 추가'">콘텐츠 추가</h2>
+    <h1 class="page-title"
+        th:text="${contentForm.type.name() == 'MOVIE'} ? '영화 추가' : '책 추가'">
+        콘텐츠 추가
+    </h1>
+    
+    <!-- 검색 (수정 모드가 아닐 때) -->
+    <div class="search-block">
+        <form th:action="@{/content/add}" method="get" class="search-form">
+            <input type="hidden" name="type" th:value="${contentForm.type}">
+            <input type="text"
+                   name="keyword"
+                   th:value="${keyword}"
+                   th:placeholder="${contentForm.type.name() == 'BOOK'} ?
+									'책 제목, 저자 검색' :
+									'영화 제목, 감독 검색'"
+                   class="search-input">
+            <button type="submit" class="search-btn" aria-label="검색">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </form>
 
-    <form th:action="@{/content/add}" method="post" th:object="${contentForm}">
+        <p class="auth-error" th:if="${apiError}" th:text="${apiError}"></p>
+
+        <!-- 책 API 검색 결과 -->
+        <div class="search-results" th:if="${contentForm.type.name() == 'BOOK'
+			        and apiBooks != null and !apiBooks.isEmpty()}">
+            <div class="search-result-item" th:each="book : ${apiBooks}">
+                <img th:src="${book.imageUrl}" th:alt="${book.title}"
+                     onerror="this.src='https://via.placeholder.com/48x64?text=Book'">
+                <div class="result-info">
+                    <strong th:text="${book.title}"></strong>
+                    <span th:text="${book.creator}"></span>
+                </div>
+                <button type="button"
+				        class="select-btn"
+				        th:attr="
+				        data-title=${book.title},
+				        data-creator=${book.creator},
+				        data-image=${book.imageUrl}">
+				    선택
+				</button>
+            </div>
+        </div>
+
+        <!-- 영화 API 검색 결과 -->
+		<div class="search-results"
+		     th:if="${contentForm.type.name() == 'MOVIE'
+        			and apiMovies != null and !apiMovies.isEmpty()}">
+		
+		    <div class="search-result-item"
+		         th:each="movie : ${apiMovies}">
+		
+		        <img th:src="${movie.imageUrl}"
+		             th:alt="${movie.title}"
+		             onerror="this.src='https://via.placeholder.com/48x64?text=Movie'">
+		
+		        <div class="result-info">
+		            <strong th:text="${movie.title}"></strong>
+		            <span th:text="${movie.creator}"></span>
+		        </div>
+		
+		        <!-- 선택 버튼 -->
+		        <button type="button"
+				        class="select-btn"
+				        th:attr="
+				        data-title=${movie.title},
+				        data-creator=${movie.creator},
+				        data-image=${movie.imageUrl}">
+				    선택
+				</button>
+		
+		    </div>
+		</div>
+    </div>
+
+    <form th:action="@{/content/add}"
+          method="post"
+          th:object="${contentForm}"
+          class="review-form">
 
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>
 
         <input type="hidden" th:field="*{type}">
 
-        <input type="text" th:field="*{title}" placeholder="제목">
-        <input type="text" th:field="*{creator}" placeholder="저자/감독">
-        <input type="text" th:field="*{imageUrl}" placeholder="이미지 URL">
-        <button type="submit">등록하기</button>
+        <div class="form-group">
+            <label>제목</label>
+            <input type="text"
+                   th:field="*{title}"
+                   placeholder="제목을 입력하세요"
+                   class="text-input">
+        </div>
+
+        <div class="form-group">
+            <label>감독 / 저자</label>
+            <input type="text"
+                   th:field="*{creator}"
+                   placeholder="감독 또는 저자를 입력하세요"
+                   class="text-input">
+        </div>
+
+        <div class="form-group">
+            <label>이미지 URL</label>
+            <input type="text"
+                   th:field="*{imageUrl}"
+                   placeholder="이미지 URL 입력"
+                   class="text-input">
+        </div>
+
+        <div class="form-actions">
+            <a href="javascript:history.back()"
+               class="btn-cancel">취소</a>
+
+            <button type="submit"
+                    class="btn-submit">
+                저장하기
+            </button>
+        </div>
+
     </form>
+    <script>
+
+	document.querySelectorAll('.select-btn').forEach(btn => {
+	
+	    btn.addEventListener('click', function() {
+	
+	        document.querySelector('[name="title"]').value =
+	            this.dataset.title;
+	
+	        document.querySelector('[name="creator"]').value =
+	            this.dataset.creator;
+	
+	        document.querySelector('[name="imageUrl"]').value =
+	            this.dataset.image;
+	
+	    });
+	
+	});
+	
+	</script>
 
 </div>
 

@@ -18,7 +18,7 @@
 
     <div class="title-area">
     	<div class="title-left">
-            <h1 th:text="${kw != null and !kw.isBlank()} ? '영화 검색 결과' : '전체 영'">전체 영화</h1>
+            <h1 th:text="${kw != null and !kw.isBlank()} ? '영화 검색 결과' : '전체 영화'">전체 영화</h1>
             <p th:if="${kw == null or kw.isBlank()}"
                th:text="'총 ' + ${paging.totalElements} + '편의 영화가 있습니다.'"></p>
             <p th:if="${kw != null and !kw.isBlank()}"

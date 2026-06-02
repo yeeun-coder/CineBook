@@ -135,9 +135,33 @@ public class ContentController {
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/add")
-	public String addForm(ContentForm contentForm, @RequestParam(name = "type") ContentType type) {
-		contentForm.setType(type);
-		return "content_form";
+	public String addForm(
+	        ContentForm contentForm,
+	        @RequestParam(name = "type") ContentType type,
+	        @RequestParam(value = "keyword", required = false) String keyword,
+	        Model model) {
+
+	    contentForm.setType(type);
+
+	    model.addAttribute("keyword", keyword);
+
+	    if (keyword != null && !keyword.isBlank()) {
+
+	        if (type == ContentType.MOVIE) {
+
+	            model.addAttribute(
+	                    "apiMovies",
+	                    contentService.searchMoviesFromTmdb(keyword, 1));
+
+	        } else {
+
+	            model.addAttribute(
+	                    "apiBooks",
+	                    contentService.searchBooksFromKakao(keyword, 1));
+	        }
+	    }
+
+	    return "content_form";
 	}
 
 	@PreAuthorize("isAuthenticated()")
