@@ -130,24 +130,91 @@
         </div>
 
     </form>
+    <div id="existModal" class="modal-overlay">
+	    <div class="modal-box">
+	        <h3>이미 등록된 콘텐츠입니다.</h3>
+	
+	        <p>
+	            상세페이지로 이동하시겠습니까?
+	        </p>
+	
+	        <div class="modal-actions">
+	            <button type="button" id="cancelMove">
+	                취소
+	            </button>
+	
+	            <button type="button" id="goDetail">
+	                상세페이지 보기
+	            </button>
+	        </div>
+	    </div>
+	</div>
     <script>
 
-	document.querySelectorAll('.select-btn').forEach(btn => {
-	
-	    btn.addEventListener('click', function() {
-	
-	        document.querySelector('[name="title"]').value =
-	            this.dataset.title;
-	
-	        document.querySelector('[name="creator"]').value =
-	            this.dataset.creator;
-	
-	        document.querySelector('[name="imageUrl"]').value =
-	            this.dataset.image;
-	
-	    });
-	
-	});
+    let moveContentId = null;
+
+    const modal =
+        document.getElementById("existModal");
+
+    document.querySelectorAll(".select-btn")
+    .forEach(btn => {
+
+        btn.addEventListener("click", async function(){
+
+            const title = this.dataset.title;
+            const creator = this.dataset.creator;
+            const image = this.dataset.image;
+
+            const type =
+                document.querySelector('[name="type"]').value;
+
+            const response =
+                await fetch(
+                    `/content/exists?title=${encodeURIComponent(title)}&type=${type}`
+                );
+
+            const result = await response.json();
+
+            if(result.exists){
+
+                moveContentId = result.id;
+
+                const contentType =
+                    type === "MOVIE" ? "영화" : "책";
+
+                document.querySelector(".modal-box h3").textContent =
+                    `이미 등록된 ${contentType}입니다.`;
+
+                modal.classList.add("show");
+
+                return;
+            }
+
+            document.querySelector('[name="title"]').value =
+                title;
+
+            document.querySelector('[name="creator"]').value =
+                creator;
+
+            document.querySelector('[name="imageUrl"]').value =
+                image;
+        });
+    });
+
+    document
+    .getElementById("cancelMove")
+    .addEventListener("click", () => {
+
+        modal.classList.remove("show");
+    });
+
+    document
+    .getElementById("goDetail")
+    .addEventListener("click", () => {
+
+        location.href =
+            "/content/" + moveContentId;
+    });
 	
 	</script>
 

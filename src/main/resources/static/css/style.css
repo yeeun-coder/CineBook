@@ -240,6 +240,27 @@ main{
     background:#f7f4ff;
 }
 
+.type-tag{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.type-tag.movie{
+    border:1px solid #d7c8ff;
+    color:#8f72ff;
+    background:#f7f4ff;
+}
+
+.type-tag.book{
+    border:1px solid #ffbdbd;
+    color:#ff8a8a;
+    background:#fff7f7;
+}
+
 /* 이미지 */
 
 .card img{

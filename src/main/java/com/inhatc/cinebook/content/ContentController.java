@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.inhatc.cinebook.review.Review;
@@ -16,7 +17,10 @@ import com.inhatc.cinebook.review.ReviewCommentService;
 import com.inhatc.cinebook.review.ReviewForm;
 import com.inhatc.cinebook.review.ReviewService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,7 @@ public class ContentController {
 	private final ContentService contentService;
 	private final ReviewService reviewService;
 	private final ReviewCommentService reviewCommentService;
+	private final ContentRepository contentRepository;
 
 	@GetMapping("/search")
 	public String search(
@@ -111,11 +116,36 @@ public class ContentController {
 			RedirectAttributes redirectAttributes) {
 		try {
 			Content content = contentService.findOrCreateBook(isbn, title, creator, imageUrl);
+			redirectAttributes.addFlashAttribute(
+			        "successMessage",
+			        "책이 등록되었습니다. 리뷰를 작성해보세요.");
+
 			return "redirect:/content/" + content.getId();
 		} catch (Exception e) {
 			redirectAttributes.addFlashAttribute("importError", "책을 불러오지 못했습니다.");
 			return "redirect:/book";
 		}
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/movie/import")
+	public String importMovie(
+	        @RequestParam(name = "title") String title,
+	        @RequestParam(name = "creator") String creator,
+	        @RequestParam(name = "imageUrl", required = false) String imageUrl,
+	        RedirectAttributes redirectAttributes) {
+
+	    try {
+	        Content content = contentService.findOrCreateMovie(title, creator, imageUrl);
+	        redirectAttributes.addFlashAttribute(
+	                "successMessage",
+	                "영화가 등록되었습니다. 리뷰를 작성해보세요.");
+
+	        return "redirect:/content/" + content.getId();
+	    } catch (Exception e) {
+	        redirectAttributes.addFlashAttribute("importError", "영화를 불러오지 못했습니다.");
+	        return "redirect:/movie";
+	    }
 	}
 
 	@GetMapping("/{id}")
@@ -224,5 +254,25 @@ public class ContentController {
 			return "redirect:/movie";
 		}
 		return "redirect:/book";
+	}
+	
+	@GetMapping("/exists")
+	@ResponseBody
+	public Map<String, Object> exists(
+	        @RequestParam(name = "title") String title,
+	        @RequestParam(name = "type") ContentType type){
+
+	    Optional<Content> content =
+	            contentRepository.findByTitleAndType(title, type);
+
+	    Map<String, Object> result = new HashMap<>();
+
+	    result.put("exists", content.isPresent());
+
+	    if(content.isPresent()){
+	        result.put("id", content.get().getId());
+	    }
+
+	    return result;
 	}
 }

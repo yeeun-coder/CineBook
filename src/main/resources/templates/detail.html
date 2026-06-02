@@ -13,6 +13,10 @@
 <body>
 
 <div class="detail-container">
+	<div class="success-message"
+	     th:if="${successMessage}"
+	     th:text="${successMessage}">
+	</div>
 
     <a th:href="${content.type.name() == 'MOVIE'} ? '/movie' : '/book'" class="back-btn">
         <i class="fa-solid fa-chevron-left"></i>
@@ -66,7 +70,10 @@
            class="review-card review-card-link">
 
             <div class="review-header">
-                <div class="profile"></div>
+			    <img class="profile"
+			         th:src="${review.author.profileImage == null || review.author.profileImage == 'default-profile.png'}
+			            ? @{/images/default-profile.png}
+			            : @{|/uploads/${review.author.profileImage}|}" alt="프로필">
                 <div class="review-user">
                     <span class="nickname" th:text="${review.author.nickname}"></span>
                     <span class="score" th:text="'★ ' + ${review.rating}"></span>

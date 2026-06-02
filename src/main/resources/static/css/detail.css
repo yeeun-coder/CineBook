@@ -209,3 +209,18 @@ body{
 
     color:gray;
 }
+
+/* 메시지 */
+
+.success-message{
+    background:#f0fff4;
+    color:#1e7e34;
+
+    padding:14px 18px;
+
+    border-radius:10px;
+
+    margin-bottom:20px;
+
+    font-size:14px;
+}

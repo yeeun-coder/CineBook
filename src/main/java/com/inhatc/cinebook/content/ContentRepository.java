@@ -9,4 +9,6 @@ public interface ContentRepository
 		extends JpaRepository<Content, Long>, JpaSpecificationExecutor<Content> {
 
 	Optional<Content> findByIsbnAndType(String isbn, ContentType type);
+	
+	Optional<Content> findByTitleAndType(String title, ContentType type);
 }

@@ -54,7 +54,7 @@ public class ContentService {
 	public Page<Content> getList(ContentType type, int page, String kw) {
 		List<Sort.Order> sorts = new ArrayList<>();
 		sorts.add(Sort.Order.desc("createDate"));
-		Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+		Pageable pageable = PageRequest.of(page, 14, Sort.by(sorts));
 		Specification<Content> spec = search(type, kw);
 		return contentRepository.findAll(spec, pageable);
 	}
@@ -169,6 +169,28 @@ public class ContentService {
 		content.setType(ContentType.BOOK);
 		content.setCreateDate(LocalDateTime.now());
 		return contentRepository.save(content);
+	}
+	
+	public Content findOrCreateMovie(String title, String creator, String imageUrl) {
+	    Optional<Content> existing = contentRepository.findByTitleAndType(title, ContentType.MOVIE);
+
+	    if (existing.isPresent()) {
+	        return existing.get();
+	    }
+
+	    Content content = new Content();
+
+	    content.setTitle(title);
+	    content.setCreator(creator);
+	    content.setImageUrl(
+	            imageUrl != null && !imageUrl.isBlank()
+	                    ? imageUrl
+	                    : "https://via.placeholder.com/200x280?text=No+Poster");
+
+	    content.setType(ContentType.MOVIE);
+	    content.setCreateDate(LocalDateTime.now());
+
+	    return contentRepository.save(content);
 	}
 
 	private BookSearchView toBookSearchView(KakaoBookDocument doc) {
