@@ -1,6 +1,10 @@
 package com.inhatc.cinebook.user;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
+import java.util.UUID;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.inhatc.cinebook.content.ContentType;
 import com.inhatc.cinebook.review.ReviewService;
@@ -46,27 +51,66 @@ public class UserSettingsController {
 
 	@PreAuthorize("isAuthenticated()")
 	@GetMapping("/settings/edit")
-	public String editProfile(Principal principal, ProfileForm profileForm) {
+	public String editProfile(Principal principal, ProfileForm profileForm, Model model) {
 		User user = userService.get(principal.getName());
 		profileForm.setNickname(user.getNickname());
+		model.addAttribute("user", user);
 		return "user/settings_edit";
 	}
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/settings/edit")
-	public String editProfile(
-			Principal principal,
-			@Valid ProfileForm profileForm,
-			BindingResult bindingResult) {
+	public String editProfile(Principal principal,
+			@Valid ProfileForm profileForm, BindingResult bindingResult,
+			@RequestParam(name = "deleteImage", defaultValue = "false") String deleteImage) {
 		if (bindingResult.hasErrors()) {
 			return "user/settings_edit";
 		}
 		User user = userService.get(principal.getName());
 		try {
-			userService.updateNickname(user, profileForm.getNickname());
+
+		    user.setNickname(profileForm.getNickname());
+
+		    MultipartFile image = profileForm.getProfileImage();
+
+		    if (image != null && !image.isEmpty()) {
+
+		        String fileName =
+		                UUID.randomUUID() + "_" + image.getOriginalFilename();
+
+		        Path uploadPath = Paths.get("uploads");
+
+		        if (!Files.exists(uploadPath)) {
+		            Files.createDirectories(uploadPath);
+		        }
+
+		        image.transferTo(uploadPath.resolve(fileName));
+
+		        user.setProfileImage(fileName);
+		    }
+		    if (deleteImage.equals("true")) {
+		        user.setProfileImage("default-profile.png");
+		    }
+		    userService.save(user);
+
 		} catch (DataIntegrityViolationException e) {
-			bindingResult.rejectValue("nickname", "duplicate", "이미 사용 중인 닉네임입니다.");
-			return "user/settings_edit";
+
+		    bindingResult.rejectValue(
+		            "nickname",
+		            "duplicate",
+		            "이미 사용 중인 닉네임입니다.");
+
+		    return "user/settings_edit";
+
+		} catch (Exception e) {
+
+		    e.printStackTrace();
+
+		    bindingResult.reject(
+		            "uploadError",
+		            "이미지 업로드 중 오류가 발생했습니다.");
+
+		    return "user/settings_edit";
 		}
 		return "redirect:/user/settings";
 	}

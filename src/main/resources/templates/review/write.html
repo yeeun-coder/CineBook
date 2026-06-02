@@ -92,9 +92,14 @@
 		        </div>
 		
 		        <!-- 선택 버튼 -->
-		        <button type="button" class="select-btn">
-		            선택
-		        </button>
+		        <form th:action="@{/review/write/select-movie}" method="post">
+				    <input type="hidden" name="title" th:value="${movie.title}">
+				    <input type="hidden" name="creator" th:value="${movie.creator}">
+				    <input type="hidden" name="imageUrl" th:value="${movie.imageUrl}">
+				    <button type="submit" class="select-btn">
+				        선택
+				    </button>
+				</form>
 		
 		    </div>
 		</div>

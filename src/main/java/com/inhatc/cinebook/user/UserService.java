@@ -17,11 +17,14 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 
 	public User create(String loginId, String nickname, String password) {
-		User user = new User();
-		user.setLoginId(loginId);
-		user.setNickname(nickname);
-		user.setPassword(passwordEncoder.encode(password));
-		return userRepository.save(user);
+	    User user = new User();
+	    user.setLoginId(loginId);
+	    user.setNickname(nickname);
+	    user.setPassword(passwordEncoder.encode(password));
+
+	    user.setProfileImage("default-profile.png");
+
+	    return userRepository.save(user);
 	}
 
 	public User get(String loginId) {
@@ -35,5 +38,9 @@ public class UserService {
 	public void updateNickname(User user, String nickname) {
 		user.setNickname(nickname);
 		userRepository.save(user);
+	}
+	
+	public void save(User user) {
+	    userRepository.save(user);
 	}
 }

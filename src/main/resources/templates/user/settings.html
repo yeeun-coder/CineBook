@@ -23,7 +23,15 @@
 
         <!-- 프로필 사이드바 -->
         <aside class="profile-card">
-            <div class="profile-avatar"></div>
+            <div class="profile-preview-box">
+			    <img id="preview"
+			         th:class="${user.profileImage == null || user.profileImage == 'default-profile.png'}
+			            ? 'default-profile'
+			            : 'uploaded-profile'"
+			         th:src="${user.profileImage == null || user.profileImage == 'default-profile.png'}
+			            ? @{/images/default-profile.png}
+			            : @{|/uploads/${user.profileImage}|}">
+			</div>
             <p class="profile-name" th:text="${user.nickname}">닉네임</p>
 
             <div class="profile-stat-block">
@@ -71,13 +79,15 @@
                             <i class="fa-solid fa-star"></i>
                             <span th:text="${review.rating}"></span>
                         </span>
-                        <div class="review-menu">
-                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                            <div class="review-menu-dropdown">
-                                <a th:href="@{|/review/modify/${review.id}|}">수정</a>
-                                <a th:href="@{|/review/delete/${review.id}|}">삭제</a>
-                            </div>
-                        </div>
+                        <!-- <div class="review-menu"
+						     onclick="event.stopPropagation(); event.preventDefault();">
+						    <i class="fa-solid fa-ellipsis-vertical"></i>
+						
+						    <div class="review-menu-dropdown">
+						        <a th:href="@{|/review/modify/${review.id}|}">수정</a>
+						        <a th:href="@{|/review/delete/${review.id}|}">삭제</a>
+						    </div>
+						</div> -->
                     </div>
 
                     <a th:href="@{|/review/${review.id}|}" class="review-row-link">
@@ -98,10 +108,26 @@
                     </a>
                 </div>
 
-                <p th:if="${paging.totalElements == 0}" class="empty-review">
-                    아직 작성한 리뷰가 없습니다.
-                    <a href="/review/write">리뷰 작성하기</a>
-                </p>
+                <div th:if="${paging.totalElements == 0}"
+				     class="empty-review">
+				
+				    <i class="fa-regular fa-star empty-icon"></i>
+				
+				    <h3>아직 작성한 리뷰가 없습니다.</h3>
+				
+				    <p th:text="
+				        ${filter == 'ALL'} ? '영화와 책에 대한 첫 리뷰를 남겨보세요.' :
+				        (${filter == 'MOVIE'} ? '영화에 대한 첫 리뷰를 남겨보세요.' :
+				        '책에 대한 첫 리뷰를 남겨보세요.')
+				    ">
+				    </p>
+				
+				    <a href="/review/write"
+				       class="empty-review-btn">
+				        리뷰 작성하기
+				    </a>
+				
+				</div>
             </div>
 
             <div class="pagination" th:if="${paging.totalPages > 1}">

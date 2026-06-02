@@ -15,15 +15,18 @@ import lombok.Setter;
 @Table(name = "site_user")
 public class User {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(unique = true)
-	private String loginId;
+    @Column(unique = true)
+    private String loginId;
 
-	private String password;
+    private String password;
 
-	@Column(unique = true)
-	private String nickname;
+    @Column(unique = true)
+    private String nickname;
+
+    @Column(length = 255)
+    private String profileImage;
 }
