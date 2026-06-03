@@ -27,9 +27,9 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final ReviewCommentRepository reviewCommentRepository;
 
-//	public List<Review> getByContent(Content content) {
-//		return reviewRepository.findByContentOrderByCreatedAtDesc(content);
-//	}
+	public List<Review> getByContent(Content content) {
+		return reviewRepository.findByContentOrderByCreatedAtDesc(content);
+	}
 
 	public Page<Review> getByUser(User user, ContentType type, int page) {
 		List<Sort.Order> sorts = new ArrayList<>();

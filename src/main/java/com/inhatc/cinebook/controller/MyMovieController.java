@@ -32,10 +32,11 @@ public class MyMovieController {
 
         User user = userService.get(principal.getName());
 
-        model.addAttribute(
-            "paging",
-            reviewService.getByUserFiltered(user, "MOVIE", page)
-        );
+//        model.addAttribute(
+//            "paging",
+//            reviewService.getByUserFiltered(user, "MOVIE", page)
+//        );
+        model.addAttribute("paging", reviewService.getByUserFiltered(user,"MOVIE", "latest", page));
 
         model.addAttribute("type", ContentType.MOVIE);
 
@@ -57,9 +58,13 @@ public class MyMovieController {
 
 	    User user = userService.get(principal.getName());
 
+//	    model.addAttribute(
+//	        "paging",
+//	        reviewService.getByUserFiltered(user, "BOOK", page)
+//	    );
 	    model.addAttribute(
-	        "paging",
-	        reviewService.getByUserFiltered(user, "BOOK", page)
+	    	    "paging",
+	    	    reviewService.getByUserFiltered(user, "BOOK", "latest", page)
 	    );
 
 	    model.addAttribute("type", ContentType.BOOK);
