@@ -22,7 +22,10 @@
 
     <div class="review-detail-card">
         <div class="review-header">
-            <div class="profile"></div>
+            <img class="profile"
+			         th:src="${review.author.profileImage == null || review.author.profileImage == 'default-profile.png'}
+			            ? @{/images/default-profile.png}
+			            : @{|/uploads/${review.author.profileImage}|}" alt="프로필">
             <div class="review-user">
                 <span class="nickname" th:text="${review.author.nickname}"></span>
                 <span class="score" th:text="'★ ' + ${review.rating}"></span>
@@ -56,6 +59,10 @@
         <div class="comment-list">
             <div class="comment-item" th:each="comment : ${comments}">
                 <div class="comment-header">
+                	<img class="profile"
+					     th:src="${comment.author.profileImage == null || comment.author.profileImage == 'default-profile.png'}
+					        ? @{/images/default-profile.png}
+					        : @{|/uploads/${comment.author.profileImage}|}">
                     <span class="nickname" th:text="${comment.author.nickname}"></span>
                     <span class="time"
                           th:text="${#temporals.format(comment.createdAt, 'yyyy.MM.dd HH:mm')}"></span>
