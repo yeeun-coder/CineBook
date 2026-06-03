@@ -68,6 +68,23 @@ public class ReviewController {
 		Content content = contentService.findOrCreateBook(isbn, title, creator, imageUrl);
 		return "redirect:/review/write?searchType=BOOK&contentId=" + content.getId();
 	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@PostMapping("/write/select-movie")
+	public String selectMovie(
+	        @RequestParam(name = "title") String title,
+	        @RequestParam(name = "creator") String creator,
+	        @RequestParam(name = "imageUrl", required = false) String imageUrl) {
+
+	    Content content =
+	            contentService.findOrCreateMovie(
+	                    title,
+	                    creator,
+	                    imageUrl);
+
+	    return "redirect:/review/write?searchType=MOVIE&contentId="
+	            + content.getId();
+	}
 
 	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/create")

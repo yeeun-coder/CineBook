@@ -96,6 +96,7 @@
 				    <input type="hidden" name="title" th:value="${movie.title}">
 				    <input type="hidden" name="creator" th:value="${movie.creator}">
 				    <input type="hidden" name="imageUrl" th:value="${movie.imageUrl}">
+				    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 				    <button type="submit" class="select-btn">
 				        선택
 				    </button>
