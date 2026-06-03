@@ -37,13 +37,15 @@ public class UserSettingsController {
 			Principal principal,
 			@RequestParam(name = "filter", defaultValue = "ALL") String filter,
 	        @RequestParam(name = "page", defaultValue = "0") int page,
+	        @RequestParam(name = "sort", defaultValue = "latest") String sort,
 	        Model model) {
 		User user = userService.get(principal.getName());
 		model.addAttribute("user", user);
 		model.addAttribute("reviewCount", reviewService.countByUser(user));
 		model.addAttribute("totalStarsGiven", reviewService.sumRatingByUser(user));
-		model.addAttribute("paging", reviewService.getByUserFiltered(user, filter, page));
+		model.addAttribute("paging", reviewService.getByUserFiltered(user, filter, sort, page));
 		model.addAttribute("filter", filter);
+		model.addAttribute("sort", sort);
 		model.addAttribute("type", ContentType.MOVIE);
 		model.addAttribute("kw", "");
 		return "user/settings";

@@ -27,30 +27,62 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final ReviewCommentRepository reviewCommentRepository;
 
-	public List<Review> getByContent(Content content) {
-		return reviewRepository.findByContentOrderByCreatedAtDesc(content);
-	}
+//	public List<Review> getByContent(Content content) {
+//		return reviewRepository.findByContentOrderByCreatedAtDesc(content);
+//	}
 
 	public Page<Review> getByUser(User user, ContentType type, int page) {
 		List<Sort.Order> sorts = new ArrayList<>();
 		sorts.add(Sort.Order.desc("createdAt"));
 		Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-		return reviewRepository.findByAuthorAndContent_TypeOrderByCreatedAtDesc(user, type, pageable);
+//		return reviewRepository.findByAuthorAndContent_TypeOrderByCreatedAtDesc(user, type, pageable);
+		return reviewRepository.findByAuthorAndContent_Type(user, type, pageable);
 	}
 
-	public Page<Review> getByUserFiltered(User user, String filter, int page) {
-		List<Sort.Order> sorts = new ArrayList<>();
-		sorts.add(Sort.Order.desc("createdAt"));
-		Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-		if ("MOVIE".equals(filter)) {
-			return reviewRepository.findByAuthorAndContent_TypeOrderByCreatedAtDesc(
-					user, ContentType.MOVIE, pageable);
-		}
-		if ("BOOK".equals(filter)) {
-			return reviewRepository.findByAuthorAndContent_TypeOrderByCreatedAtDesc(
-					user, ContentType.BOOK, pageable);
-		}
-		return reviewRepository.findByAuthorOrderByCreatedAtDesc(user, pageable);
+	public Page<Review> getByUserFiltered(User user, String filter, String sort, int page) {
+		
+		Sort sorting;
+
+	    switch (sort) {
+	        case "oldest":
+	            sorting = Sort.by("createdAt").ascending();
+	            break;
+
+	        case "highRating":
+	            sorting = Sort.by("rating").descending();
+	            break;
+
+	        case "lowRating":
+	            sorting = Sort.by("rating").ascending();
+	            break;
+
+	        default:
+	            sorting = Sort.by("createdAt").descending();
+	    }
+	    Pageable pageable = PageRequest.of(page, 10, sorting);
+	    if ("MOVIE".equals(filter)) {
+	        return reviewRepository.findByAuthorAndContent_Type(
+	                user, ContentType.MOVIE, pageable);
+	    }
+
+	    if ("BOOK".equals(filter)) {
+	        return reviewRepository.findByAuthorAndContent_Type(
+	                user, ContentType.BOOK, pageable);
+	    }
+	    return reviewRepository.findByAuthor(user, pageable);
+	    
+//		List<Sort.Order> sorts = new ArrayList<>();
+//		sorts.add(Sort.Order.desc("createdAt"));
+//		Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+//		if ("MOVIE".equals(filter)) {
+//			return reviewRepository.findByAuthorAndContent_TypeOrderByCreatedAtDesc(
+//					user, ContentType.MOVIE, pageable);
+//		}
+//		if ("BOOK".equals(filter)) {
+//			return reviewRepository.findByAuthorAndContent_TypeOrderByCreatedAtDesc(
+//					user, ContentType.BOOK, pageable);
+//		}
+//		return reviewRepository.findByAuthorOrderByCreatedAtDesc(user, pageable);
 	}
 
 	public long countByUser(User user) {

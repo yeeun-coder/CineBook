@@ -14,12 +14,21 @@ import com.inhatc.cinebook.user.User;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-	List<Review> findByContentOrderByCreatedAtDesc(Content content);
+//	List<Review> findByContentOrderByCreatedAtDesc(Content content);
+//
+//	Page<Review> findByAuthorOrderByCreatedAtDesc(User author, Pageable pageable);
+	
+	Page<Review> findByAuthor(
+	        User author,
+	        Pageable pageable);
 
-	Page<Review> findByAuthorOrderByCreatedAtDesc(User author, Pageable pageable);
+	Page<Review> findByAuthorAndContent_Type(
+	        User author,
+	        ContentType type,
+	        Pageable pageable);
 
-	Page<Review> findByAuthorAndContent_TypeOrderByCreatedAtDesc(
-			User author, ContentType type, Pageable pageable);
+//	Page<Review> findByAuthorAndContent_TypeOrderByCreatedAtDesc(
+//			User author, ContentType type, Pageable pageable);
 
 	long countByContentId(Long contentId);
 

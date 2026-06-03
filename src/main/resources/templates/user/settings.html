@@ -57,15 +57,33 @@
             <div class="my-reviews-header">
                 <h2>내가 쓴 리뷰</h2>
                 <div class="filters">
-                    <form th:action="@{/user/settings}" method="get" class="filter-form">
+                    <form th:href="@{/user/settings(page=${pageNum}, filter=${filter}, sort=${sort})}">
                         <select name="filter" onchange="this.form.submit()">
                             <option value="ALL" th:selected="${filter == 'ALL'}">전체</option>
                             <option value="MOVIE" th:selected="${filter == 'MOVIE'}">영화</option>
                             <option value="BOOK" th:selected="${filter == 'BOOK'}">책</option>
                         </select>
-                        <select name="sort" disabled title="최신순 고정">
-                            <option selected>최신순</option>
-                        </select>
+                        <select name="sort" onchange="this.form.submit()">
+						    <option value="latest"
+						            th:selected="${sort == 'latest'}">
+						        최신순
+						    </option>
+						
+						    <option value="oldest"
+						            th:selected="${sort == 'oldest'}">
+						        오래된순
+						    </option>
+						
+						    <option value="highRating"
+						            th:selected="${sort == 'highRating'}">
+						        별점 높은순
+						    </option>
+						
+						    <option value="lowRating"
+						            th:selected="${sort == 'lowRating'}">
+						        별점 낮은순
+						    </option>
+						</select>
                     </form>
                 </div>
             </div>

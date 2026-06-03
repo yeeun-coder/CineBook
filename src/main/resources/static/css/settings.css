@@ -157,12 +157,30 @@ main.settings-page{
 }
 
 .filter-form select{
-    height:34px;
-    border:1px solid #ccc;
-    border-radius:6px;
-    padding:0 10px;
-    background:#fff;
+    height:38px;
+    padding:0 14px;
+
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+
+    background:white;
+
     font-size:14px;
+    font-weight:500;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.filter-form select:hover{
+    border-color:#111;
+}
+
+.filter-form select:focus{
+    outline:none;
+    border-color:#111;
+    box-shadow:0 0 0 3px rgba(0,0,0,.08);
 }
 
 .review-rows{
