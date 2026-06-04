@@ -145,10 +145,11 @@ public class ContentController {
 	    } catch (Exception e) {
 //	        redirectAttributes.addFlashAttribute("importError", "영화를 불러오지 못했습니다.");
 //	        return "redirect:/movie";
-	    	System.out.println("title = " + title);
-	    	System.out.println("creator = " + creator);
-	    	System.out.println("imageUrl = " + imageUrl);
-	    	e.printStackTrace();
+	        System.out.println("title = " + title);
+	        System.out.println("creator = " + creator);
+	        System.out.println("imageUrl = " + imageUrl);
+
+	        e.printStackTrace();
 	        throw e;
 	    }
 	}
